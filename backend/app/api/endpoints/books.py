@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
 from sqlalchemy.orm import Session
 
 from app import crud
@@ -101,3 +101,26 @@ def delete_book(
         raise HTTPException(status_code=404, detail="Book not found")
     book = crud.book.remove(db, id=book_id)
     return book
+
+
+@router.post("/{book_id}/cover", response_model=BookResponse)
+async def upload_book_cover(
+    book_id: UUID,
+    file: UploadFile = File(...),
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_active_admin),
+) -> Any:
+    """
+    Upload cover image for a book. (Admin only)
+    """
+    book = crud.book.get(db, id=book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    
+    from app.utils.storage import storage_service
+    cover_url = await storage_service.upload_cover(file, str(book_id))
+    
+    # Update book cover URL
+    book = crud.book.update(db, db_obj=book, obj_in={"cover_image_url": cover_url})
+    return book
+

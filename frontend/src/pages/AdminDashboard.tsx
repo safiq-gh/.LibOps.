@@ -13,7 +13,11 @@ export default function AdminDashboard() {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [isbn, setIsbn] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const [publisher, setPublisher] = useState('');
+  const [category, setCategory] = useState('');
+  const [publishedYear, setPublishedYear] = useState<number>(new Date().getFullYear());
+  const [copies, setCopies] = useState(1);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
 
   useEffect(() => {
     apiClient.get('/users/me')
@@ -38,17 +42,44 @@ export default function AdminDashboard() {
   const handleAddBook = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiClient.post('/books/', {
+      // 1. Create the book
+      const bookRes = await apiClient.post('/books/', {
         title,
         author,
         isbn,
-        total_quantity: quantity
+        publisher,
+        category,
+        published_year: publishedYear,
+        total_copies: copies,
+        available_copies: copies
       });
+
+      const newBook = bookRes.data;
+
+      // 2. Upload cover if selected
+      if (coverFile) {
+        const formData = new FormData();
+        formData.append('file', coverFile);
+        await apiClient.post(`/books/${newBook.id}/cover`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
+
       alert('Book added successfully');
       setTitle('');
       setAuthor('');
       setIsbn('');
-      setQuantity(1);
+      setPublisher('');
+      setCategory('');
+      setPublishedYear(new Date().getFullYear());
+      setCopies(1);
+      setCoverFile(null);
+      // Reset file input value
+      const fileInput = document.getElementById('cover-file-input') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+
       // Refresh books
       const res = await apiClient.get('/books/');
       setBooks(res.data);
@@ -86,7 +117,19 @@ export default function AdminDashboard() {
               <input type="text" placeholder="Title" className="input-field" value={title} onChange={e => setTitle(e.target.value)} required />
               <input type="text" placeholder="Author" className="input-field" value={author} onChange={e => setAuthor(e.target.value)} required />
               <input type="text" placeholder="ISBN" className="input-field" value={isbn} onChange={e => setIsbn(e.target.value)} required />
-              <input type="number" placeholder="Total Quantity" className="input-field" min="1" value={quantity} onChange={e => setQuantity(Number(e.target.value))} required />
+              <input type="text" placeholder="Publisher" className="input-field" value={publisher} onChange={e => setPublisher(e.target.value)} required />
+              <input type="text" placeholder="Category" className="input-field" value={category} onChange={e => setCategory(e.target.value)} required />
+              <input type="number" placeholder="Published Year" className="input-field" min="1000" max="2100" value={publishedYear} onChange={e => setPublishedYear(Number(e.target.value))} required />
+              <input type="number" placeholder="Total Copies" className="input-field" min="1" value={copies} onChange={e => setCopies(Number(e.target.value))} required />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Book Cover Image (Optional)</label>
+                <input 
+                  type="file" 
+                  id="cover-file-input"
+                  accept="image/*" 
+                  onChange={e => setCoverFile(e.target.files ? e.target.files[0] : null)} 
+                />
+              </div>
               <button type="submit" className="btn" id="btn-add-book">Add Book</button>
             </form>
           </div>
@@ -127,7 +170,7 @@ export default function AdminDashboard() {
                 <tr key={book.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                   <td style={{ padding: '12px' }}>{book.title}</td>
                   <td style={{ padding: '12px' }}>{book.author}</td>
-                  <td style={{ padding: '12px' }}>{book.available_quantity} / {book.total_quantity}</td>
+                  <td style={{ padding: '12px' }}>{book.available_copies} / {book.total_copies}</td>
                   <td style={{ padding: '12px' }}>
                     <button className="btn btn-danger" style={{ padding: '6px 12px', fontSize: '0.9rem' }} onClick={() => handleDeleteBook(book.id)}>Delete</button>
                   </td>

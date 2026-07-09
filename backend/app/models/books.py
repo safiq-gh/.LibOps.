@@ -32,3 +32,8 @@ class Book(UUIDMixin, TimeMixin, Base):
     cover_image_url: Mapped[str] = mapped_column(nullable=True)
     total_copies: Mapped[int] = mapped_column(nullable=False)
     available_copies: Mapped[int] = mapped_column(nullable=False)
+
+    @property
+    def available_quantity(self) -> int:
+        return self.available_copies
+

@@ -40,18 +40,29 @@ export default function Books() {
         <div className="grid-container" id="books-grid">
           {books.map(book => (
             <div key={book.id} className="glass-panel book-card" id={`book-${book.id}`}>
+              {book.cover_image_url ? (
+                <img 
+                  src={book.cover_image_url} 
+                  alt={book.title} 
+                  style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' }} 
+                />
+              ) : (
+                <div style={{ width: '100%', height: '200px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', marginBottom: '16px', color: 'var(--text-secondary)' }}>
+                  No Cover Image
+                </div>
+              )}
               <h3>{book.title}</h3>
               <p style={{ color: 'var(--text-secondary)' }}>by {book.author}</p>
               <p>ISBN: {book.isbn}</p>
-              <p>Available: <span style={{ color: book.available_quantity > 0 ? 'var(--success-color)' : 'var(--danger-color)' }}>{book.available_quantity} / {book.total_quantity}</span></p>
+              <p>Available: <span style={{ color: book.available_copies > 0 ? 'var(--success-color)' : 'var(--danger-color)' }}>{book.available_copies} / {book.total_copies}</span></p>
               <button 
                 className="btn" 
-                disabled={book.available_quantity <= 0}
+                disabled={book.available_copies <= 0}
                 onClick={() => handleBorrow(book.id)}
-                style={{ marginTop: 'auto', opacity: book.available_quantity <= 0 ? 0.5 : 1 }}
+                style={{ marginTop: 'auto', opacity: book.available_copies <= 0 ? 0.5 : 1 }}
                 id={`btn-borrow-${book.id}`}
               >
-                {book.available_quantity > 0 ? 'Borrow Book' : 'Out of Stock'}
+                {book.available_copies > 0 ? 'Borrow Book' : 'Out of Stock'}
               </button>
             </div>
           ))}
