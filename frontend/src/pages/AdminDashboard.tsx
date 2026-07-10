@@ -101,50 +101,87 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!user) return <p style={{ padding: '32px', textAlign: 'center' }}>Loading...</p>;
+  if (!user) return <p className="text-center mt-16 text-secondary italic">Loading...</p>;
 
   return (
     <div>
       <Navbar user={user} />
-      <main style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '24px' }}>Admin Dashboard</h1>
+      <main className="container">
+        <h1 className="mb-12">Librarian Desk</h1>
         
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+        <div className="grid-container mb-16 gap-12">
           
           {/* Add Book Section */}
-          <div className="glass-panel" id="admin-add-book">
-            <h2 style={{ marginBottom: '16px' }}>Add New Book</h2>
-            <form onSubmit={handleAddBook} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <input type="text" placeholder="Title" className="input-field" value={title} onChange={e => setTitle(e.target.value)} required />
-              <input type="text" placeholder="Author" className="input-field" value={author} onChange={e => setAuthor(e.target.value)} required />
-              <input type="text" placeholder="ISBN" className="input-field" value={isbn} onChange={e => setIsbn(e.target.value)} required />
-              <input type="text" placeholder="Publisher" className="input-field" value={publisher} onChange={e => setPublisher(e.target.value)} required />
-              <input type="text" placeholder="Category" className="input-field" value={category} onChange={e => setCategory(e.target.value)} required />
-              <input type="number" placeholder="Published Year" className="input-field" min="1000" max="2100" value={publishedYear} onChange={e => setPublishedYear(Number(e.target.value))} required />
-              <input type="number" placeholder="Total Copies" className="input-field" min="1" value={copies} onChange={e => setCopies(Number(e.target.value))} required />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Book Cover Image (Optional)</label>
+          <div id="admin-add-book">
+            <h2 className="mb-8" style={{ borderBottom: '1px solid var(--border-dark)', paddingBottom: '16px' }}>Add to Collection</h2>
+            <form onSubmit={handleAddBook} className="flex flex-col gap-6">
+              
+              <div className="form-group">
+                <label className="form-label">Title</label>
+                <input type="text" placeholder="Title" className="input-field" value={title} onChange={e => setTitle(e.target.value)} required />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Author</label>
+                <input type="text" placeholder="Author" className="input-field" value={author} onChange={e => setAuthor(e.target.value)} required />
+              </div>
+              
+              <div className="flex gap-6">
+                <div className="form-group w-full">
+                  <label className="form-label">ISBN</label>
+                  <input type="text" placeholder="ISBN" className="input-field" value={isbn} onChange={e => setIsbn(e.target.value)} required />
+                </div>
+                <div className="form-group w-full">
+                  <label className="form-label">Category</label>
+                  <input type="text" placeholder="Category" className="input-field" value={category} onChange={e => setCategory(e.target.value)} required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Publisher</label>
+                <input type="text" placeholder="Publisher" className="input-field" value={publisher} onChange={e => setPublisher(e.target.value)} required />
+              </div>
+              
+              <div className="flex gap-6">
+                <div className="form-group w-full">
+                  <label className="form-label">Published Year</label>
+                  <input type="number" className="input-field" min="1000" max="2100" value={publishedYear} onChange={e => setPublishedYear(Number(e.target.value))} required />
+                </div>
+                <div className="form-group w-full">
+                  <label className="form-label">Total Copies</label>
+                  <input type="number" className="input-field" min="1" value={copies} onChange={e => setCopies(Number(e.target.value))} required />
+                </div>
+              </div>
+
+              <div className="form-group mt-4 mb-4">
+                <label className="form-label" htmlFor="cover-file-input">Cover Image (Optional)</label>
                 <input 
                   type="file" 
                   id="cover-file-input"
                   accept="image/*" 
                   onChange={e => setCoverFile(e.target.files ? e.target.files[0] : null)} 
+                  className="mt-2 text-sm text-secondary"
+                  style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}
                 />
               </div>
-              <button type="submit" className="btn" id="btn-add-book">Add Book</button>
+              
+              <button type="submit" className="btn w-full mt-4" id="btn-add-book">Add Book</button>
             </form>
           </div>
 
           {/* System Users Section */}
-          <div className="glass-panel" id="admin-users">
-            <h2 style={{ marginBottom: '16px' }}>System Users</h2>
-            <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div className="flex flex-col" id="admin-users">
+            <h2 className="mb-8" style={{ borderBottom: '1px solid var(--border-dark)', paddingBottom: '16px' }}>Registered Readers</h2>
+            <div className="overflow-y-auto pr-4" style={{ maxHeight: '600px' }}>
+              <ul className="flex flex-col" style={{ listStyle: 'none' }}>
                 {usersList.map(u => (
-                  <li key={u.id} style={{ padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                    <strong>{u.full_name}</strong> ({u.email})
-                    <span style={{ float: 'right', color: u.role === 'admin' ? 'var(--primary-hover)' : 'var(--text-secondary)' }}>
-                      {u.role}
+                  <li key={u.id} className="flex justify-between items-center py-4" style={{ borderBottom: '1px solid var(--border-color)' }}>
+                    <div>
+                      <strong className="text-primary font-medium block">{u.full_name}</strong>
+                      <span className="text-sm text-secondary">{u.email}</span>
+                    </div>
+                    <span className="text-xs text-tertiary">
+                      {u.role === 'admin' ? 'Librarian' : 'Reader'}
                     </span>
                   </li>
                 ))}
@@ -155,30 +192,39 @@ export default function AdminDashboard() {
         </div>
 
         {/* Manage Books Section */}
-        <div className="glass-panel" style={{ marginTop: '32px' }} id="admin-manage-books">
-          <h2 style={{ marginBottom: '16px' }}>Manage Books Catalog</h2>
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <th style={{ padding: '12px' }}>Title</th>
-                <th style={{ padding: '12px' }}>Author</th>
-                <th style={{ padding: '12px' }}>Quantity (Avail/Total)</th>
-                <th style={{ padding: '12px' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.map(book => (
-                <tr key={book.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: '12px' }}>{book.title}</td>
-                  <td style={{ padding: '12px' }}>{book.author}</td>
-                  <td style={{ padding: '12px' }}>{book.available_copies} / {book.total_copies}</td>
-                  <td style={{ padding: '12px' }}>
-                    <button className="btn btn-danger" style={{ padding: '6px 12px', fontSize: '0.9rem' }} onClick={() => handleDeleteBook(book.id)}>Delete</button>
-                  </td>
+        <div className="mt-16" id="admin-manage-books">
+          <h2 className="mb-8" style={{ borderBottom: '1px solid var(--border-dark)', paddingBottom: '16px' }}>Collection Management</h2>
+          <div className="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Status</th>
+                  <th style={{ width: '120px' }}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {books.map(book => (
+                  <tr key={book.id}>
+                    <td className="font-medium text-primary">{book.title}</td>
+                    <td className="text-secondary">{book.author}</td>
+                    <td>
+                      <span className="text-primary font-medium">
+                        {book.available_copies}
+                      </span> 
+                      <span className="text-tertiary"> of {book.total_copies}</span>
+                    </td>
+                    <td>
+                      <button className="btn btn-text text-sm text-tertiary" onClick={() => handleDeleteBook(book.id)}>
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </main>

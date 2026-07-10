@@ -14,20 +14,23 @@ export default function Dashboard() {
       .catch(() => navigate('/login'));
   }, [navigate]);
 
-  if (!user) return <p style={{ padding: '32px', textAlign: 'center' }}>Loading...</p>;
+  if (!user) return <p className="text-center mt-16 text-secondary italic">Loading...</p>;
 
   return (
     <div>
       <Navbar user={user} />
-      <main style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div className="glass-panel" id="dashboard-welcome">
-          <h1 style={{ marginBottom: '16px' }}>Welcome back, {user.full_name}!</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            This is your LibOps dashboard. Use the navigation above to browse books or check your borrow history.
+      <main className="container">
+        <div className="mt-16 mb-16" id="dashboard-welcome">
+          <p className="text-xs text-tertiary mb-4">Reading Space</p>
+          <h1 className="mb-8" style={{ maxWidth: '15ch', lineHeight: 1 }}>
+            Welcome back, {user.full_name.split(' ')[0]}.
+          </h1>
+          <p className="text-secondary" style={{ fontSize: '1.25rem' }}>
+            Every great journey begins with a single page. 
+            Explore the catalog to find your next story, or review your reading history.
           </p>
         </div>
       </main>
     </div>
   );
 }
-

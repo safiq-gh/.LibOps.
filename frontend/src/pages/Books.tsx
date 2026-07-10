@@ -23,7 +23,6 @@ export default function Books() {
     try {
       await apiClient.post('/borrow/', { book_id: bookId });
       alert('Book borrowed successfully!');
-      // Refresh books to update available quantity
       const res = await apiClient.get('/books/');
       setBooks(res.data);
     } catch (err: any) {
@@ -31,43 +30,55 @@ export default function Books() {
     }
   };
 
-  if (!user) return <p style={{ padding: '32px', textAlign: 'center' }}>Loading...</p>;
+  if (!user) return <p className="text-center mt-16 text-secondary italic">Loading...</p>;
 
   return (
     <div>
       <Navbar user={user} />
-      <main style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '24px' }}>Library Catalog</h1>
-        <div className="grid-container" id="books-grid">
-          {books.map(book => (
-            <div key={book.id} className="glass-panel book-card" id={`book-${book.id}`}>
-              {book.cover_image_url ? (
-                <img 
-                  src={book.cover_image_url} 
-                  alt={book.title} 
-                  style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' }} 
-                />
-              ) : (
-                <div style={{ width: '100%', height: '200px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', marginBottom: '16px', color: 'var(--text-secondary)' }}>
-                  No Cover Image
-                </div>
-              )}
-              <h3>{book.title}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>by {book.author}</p>
-              <p>ISBN: {book.isbn}</p>
-              <p>Available: <span style={{ color: book.available_copies > 0 ? 'var(--success-color)' : 'var(--danger-color)' }}>{book.available_copies} / {book.total_copies}</span></p>
-              <button 
-                className="btn" 
-                disabled={book.available_copies <= 0}
-                onClick={() => handleBorrow(book.id)}
-                style={{ marginTop: 'auto', opacity: book.available_copies <= 0 ? 0.5 : 1 }}
-                id={`btn-borrow-${book.id}`}
-              >
-                {book.available_copies > 0 ? 'Borrow Book' : 'Out of Stock'}
-              </button>
-            </div>
-          ))}
+      <main className="container">
+        <div className="flex justify-between items-center mb-12">
+          <h1 className="mb-0">Library Catalog</h1>
         </div>
+        
+        {books.length === 0 ? (
+          <p className="text-secondary italic">The collection is currently empty.</p>
+        ) : (
+          <div className="grid-container" id="books-grid">
+            {books.map(book => (
+              <div key={book.id} className="book-card" id={`book-${book.id}`}>
+                {book.cover_image_url ? (
+                  <img 
+                    src={book.cover_image_url} 
+                    alt={book.title} 
+                    className="book-cover"
+                  />
+                ) : (
+                  <div className="book-cover">
+                    No Cover Image
+                  </div>
+                )}
+                
+                <div className="flex flex-col flex-1">
+                  <h3 className="font-semibold text-primary mb-1">{book.title}</h3>
+                  <p className="text-secondary text-sm mb-4">by {book.author}</p>
+                  
+                  <div className="mt-auto pt-4 border-t border-border-light">
+                    <p className="text-xs text-tertiary mb-4">ISBN: {book.isbn}</p>
+                    
+                    <button 
+                      className="btn w-full" 
+                      disabled={book.available_copies <= 0}
+                      onClick={() => handleBorrow(book.id)}
+                      id={`btn-borrow-${book.id}`}
+                    >
+                      {book.available_copies > 0 ? 'Start Reading' : 'Currently Being Read'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

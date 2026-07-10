@@ -23,7 +23,6 @@ export default function BorrowHistory() {
     try {
       await apiClient.post(`/borrow/${recordId}/return`);
       alert('Book returned successfully!');
-      // Refresh history
       const res = await apiClient.get('/borrow/me');
       setHistory(res.data);
     } catch (err: any) {
@@ -31,42 +30,52 @@ export default function BorrowHistory() {
     }
   };
 
-  if (!user) return <p style={{ padding: '32px', textAlign: 'center' }}>Loading...</p>;
+  if (!user) return <p className="text-center mt-16 text-secondary italic">Loading...</p>;
 
   return (
     <div>
       <Navbar user={user} />
-      <main style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '24px' }}>My Borrow History</h1>
+      <main className="container max-w-md" style={{ maxWidth: '800px' }}>
+        <h1 className="mb-12">Reading History</h1>
+        
         {history.length === 0 ? (
-          <div className="glass-panel">
-            <p>You haven't borrowed any books yet.</p>
-          </div>
+          <p className="text-secondary italic">You haven't added any stories to your history yet.</p>
         ) : (
-          <div className="grid-container" id="history-grid">
+          <div className="flex flex-col border-t border-border-dark" id="history-grid">
             {history.map(record => (
-              <div key={record.id} className="glass-panel book-card" id={`record-${record.id}`}>
-                <h3>{record.book.title}</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>Borrowed on: {new Date(record.borrowed_at).toLocaleDateString()}</p>
-                <p style={{ color: 'var(--text-secondary)' }}>Due date: {new Date(record.due_date).toLocaleDateString()}</p>
+              <div key={record.id} className="ledger-item" id={`record-${record.id}`}>
+                <div className="flex-1 pr-6">
+                  <h3 className="font-semibold text-primary mb-1">{record.book.title}</h3>
+                  <div className="flex flex-col gap-1 mt-2">
+                    <p className="text-sm text-secondary">
+                      <span className="text-tertiary w-24 inline-block">Borrowed:</span> 
+                      {new Date(record.borrowed_at).toLocaleDateString()}
+                    </p>
+                    <p className="text-sm text-secondary">
+                      <span className="text-tertiary w-24 inline-block">Due Date:</span> 
+                      {new Date(record.due_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
                 
-                {record.returned_at ? (
-                  <p style={{ color: 'var(--success-color)', fontWeight: 600 }}>
-                    Returned on: {new Date(record.returned_at).toLocaleDateString()}
-                  </p>
-                ) : (
-                  <>
-                    <p style={{ color: 'var(--danger-color)', fontWeight: 600 }}>Status: Not Returned</p>
-                    <button 
-                      className="btn" 
-                      onClick={() => handleReturn(record.id)}
-                      style={{ marginTop: 'auto' }}
-                      id={`btn-return-${record.id}`}
-                    >
-                      Return Book
-                    </button>
-                  </>
-                )}
+                <div className="mt-6 md:mt-0 flex flex-col items-start md:items-end min-w-[140px]">
+                  {record.returned_at ? (
+                    <p className="text-sm text-secondary italic">
+                      Returned on {new Date(record.returned_at).toLocaleDateString()}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-sm text-primary font-medium mb-3">Reading</p>
+                      <button 
+                        className="btn btn-sm" 
+                        onClick={() => handleReturn(record.id)}
+                        id={`btn-return-${record.id}`}
+                      >
+                        Return Book
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>

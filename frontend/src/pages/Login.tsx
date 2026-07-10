@@ -27,35 +27,41 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '400px' }} id="login-panel">
-        <h1 style={{ marginBottom: '24px', textAlign: 'center' }}>Login to LibOps</h1>
-        {error && <p style={{ color: 'var(--danger-color)', marginBottom: '16px', textAlign: 'center' }} id="login-error">{error}</p>}
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }} id="login-form">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            className="input-field"
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
-            id="login-email"
-          />
-          <input 
-            type="password" 
-            placeholder="Password" 
-            className="input-field"
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
-            id="login-password"
-          />
-          <button type="submit" className="btn" id="login-submit">Login</button>
+      <div className="auth-panel" id="login-panel">
+        <h1 className="text-center mb-12">Sign In</h1>
+        
+        {error && <div className="alert alert-danger text-center" id="login-error">{error}</div>}
+        
+        <form onSubmit={handleLogin} className="flex flex-col gap-8" id="login-form">
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
+            <input 
+              type="email" 
+              className="input-field"
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              required 
+              id="login-email"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Password</label>
+            <input 
+              type="password" 
+              className="input-field"
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              required 
+              id="login-password"
+            />
+          </div>
+          <button type="submit" className="btn mt-4 w-full" id="login-submit">Continue to Library</button>
         </form>
-        <p style={{ marginTop: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-          Don't have an account? <Link to="/register">Register here</Link>
+        
+        <p className="text-center text-secondary mt-12 text-sm">
+          Don't have an account? <Link to="/register" className="text-primary italic border-b border-text-primary">Create one</Link>
         </p>
       </div>
     </div>
   );
 }
-
