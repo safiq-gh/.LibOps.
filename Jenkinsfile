@@ -14,6 +14,15 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Setup Environment') {
+            steps {
+                withCredentials([file(credentialsId: 'libops-env', variable: 'ENV_FILE')]) {
+                sh '''
+                    cp $ENV_FILE backend/.env
+                '''
+                }
+            }
+        }
 
         stage('Quality Checks') {
             steps {
