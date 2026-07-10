@@ -1,4 +1,3 @@
-import asyncio
 from app.db.session import SessionLocal
 from app.models.books import Book
 

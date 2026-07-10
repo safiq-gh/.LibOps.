@@ -1,4 +1,3 @@
-import asyncio
 from app.db.session import SessionLocal
 from app.models.books import Book
 
@@ -27,6 +26,39 @@ def seed_books():
                 "total_copies": 4,
                 "available_copies": 4,
                 "cover_image_url": "https://covers.openlibrary.org/b/id/12316499-L.jpg"
+            },
+            {
+                "title": "Brave New World",
+                "author": "Aldous Huxley",
+                "isbn": "9780060850524",
+                "publisher": "Harper Perennial",
+                "category": "Science Fiction",
+                "published_year": 1932,
+                "total_copies": 5,
+                "available_copies": 5,
+                "cover_image_url": "https://covers.openlibrary.org/b/id/8261313-L.jpg"
+            },
+            {
+                "title": "The Metamorphosis",
+                "author": "Franz Kafka",
+                "isbn": "9780553213690",
+                "publisher": "Bantam Classics",
+                "category": "Classic",
+                "published_year": 1915,
+                "total_copies": 2,
+                "available_copies": 2,
+                "cover_image_url": "https://covers.openlibrary.org/b/id/8060893-L.jpg"
+            },
+            {
+                "title": "The Lord of the Rings",
+                "author": "J.R.R. Tolkien",
+                "isbn": "9780544003415",
+                "publisher": "Mariner Books",
+                "category": "Fantasy",
+                "published_year": 1954,
+                "total_copies": 6,
+                "available_copies": 6,
+                "cover_image_url": "https://covers.openlibrary.org/b/id/8259439-L.jpg"
             }
         ]
 
