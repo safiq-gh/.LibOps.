@@ -10,6 +10,14 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
+    backend_url: str = "http://localhost:8000"
+    cors_origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:80",
+    ]
 
     # S3 Settings
     s3_bucket: str = "libops-book-covers"

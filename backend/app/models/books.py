@@ -5,7 +5,7 @@ from app.db.base import Base
 from app.models.mixins import UUIDMixin, TimeMixin
 
 if TYPE_CHECKING:
-    from app.models.borrow_record import BorrowRecord
+    from app.models.borrowrecord import BorrowRecord
 
 
 class Book(UUIDMixin, TimeMixin, Base):
@@ -21,7 +21,7 @@ class Book(UUIDMixin, TimeMixin, Base):
             name="ck_published_year",
         ),
     )
-    borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="book")
+    borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="book", cascade="all, delete-orphan")
     isbn: Mapped[str] = mapped_column(nullable=False, unique=True)
     title: Mapped[str] = mapped_column(nullable=False)
     author: Mapped[str] = mapped_column(nullable=False)
@@ -33,7 +33,5 @@ class Book(UUIDMixin, TimeMixin, Base):
     total_copies: Mapped[int] = mapped_column(nullable=False)
     available_copies: Mapped[int] = mapped_column(nullable=False)
 
-    @property
-    def available_quantity(self) -> int:
-        return self.available_copies
+
 

@@ -11,7 +11,7 @@ from app.models.enums import UserRole
 
 class User(UUIDMixin, TimeMixin, Base):
     __tablename__ = "users"
-    borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="user")
+    borrow_records: Mapped[list["BorrowRecord"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(index=True, unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)

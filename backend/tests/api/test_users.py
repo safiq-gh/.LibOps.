@@ -8,7 +8,7 @@ def test_register_user(client: TestClient) -> None:
         "role": "member"
     }
     r = client.post("/api/v1/users/", json=data)
-    assert r.status_code == 200
+    assert r.status_code == 201
     created_user = r.json()
     assert created_user["email"] == data["email"]
     assert "id" in created_user
@@ -20,6 +20,10 @@ def test_register_user_duplicate_email(client: TestClient) -> None:
         "password": "testpassword123",
         "role": "member"
     }
+    # First creation should succeed
+    client.post("/api/v1/users/", json=data)
+    
+    # Second creation should fail
     r = client.post("/api/v1/users/", json=data)
     assert r.status_code == 400
     assert r.json()["detail"] == "The user with this username already exists in the system."

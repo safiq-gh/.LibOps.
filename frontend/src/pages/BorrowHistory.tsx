@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 import Navbar from '../components/Navbar';
+import type { User } from '../types/user';
 
 export default function BorrowHistory() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [history, setHistory] = useState<any[]>([]);
   const navigate = useNavigate();
 
@@ -12,7 +13,7 @@ export default function BorrowHistory() {
     apiClient.get('/users/me')
       .then(res => {
         setUser(res.data);
-        return apiClient.get('/borrow/my-records');
+        return apiClient.get('/borrow/me');
       })
       .then(res => setHistory(res.data))
       .catch(() => navigate('/login'));
@@ -23,7 +24,7 @@ export default function BorrowHistory() {
       await apiClient.post(`/borrow/${recordId}/return`);
       alert('Book returned successfully!');
       // Refresh history
-      const res = await apiClient.get('/borrow/my-records');
+      const res = await apiClient.get('/borrow/me');
       setHistory(res.data);
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to return book');
@@ -46,12 +47,12 @@ export default function BorrowHistory() {
             {history.map(record => (
               <div key={record.id} className="glass-panel book-card" id={`record-${record.id}`}>
                 <h3>{record.book.title}</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>Borrowed on: {new Date(record.borrow_date).toLocaleDateString()}</p>
+                <p style={{ color: 'var(--text-secondary)' }}>Borrowed on: {new Date(record.borrowed_at).toLocaleDateString()}</p>
                 <p style={{ color: 'var(--text-secondary)' }}>Due date: {new Date(record.due_date).toLocaleDateString()}</p>
                 
-                {record.return_date ? (
+                {record.returned_at ? (
                   <p style={{ color: 'var(--success-color)', fontWeight: 600 }}>
-                    Returned on: {new Date(record.return_date).toLocaleDateString()}
+                    Returned on: {new Date(record.returned_at).toLocaleDateString()}
                   </p>
                 ) : (
                   <>

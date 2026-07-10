@@ -1,18 +1,19 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app import crud
 from app.api import deps
+from app.models.enums import UserRole
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
 
 router = APIRouter()
 
 
-@router.post("/", response_model=UserResponse)
+@router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(
     *,
     db: Session = Depends(deps.get_db),
@@ -27,6 +28,8 @@ def create_user(
             status_code=400,
             detail="The user with this username already exists in the system.",
         )
+    user_in.role = UserRole.MEMBER
+    user_in.is_active = True
     user = crud.user.create(db, obj_in=user_in)
     return user
 
@@ -51,6 +54,8 @@ def update_user_me(
     """
     Update own user.
     """
+    user_in.role = None
+    user_in.is_active = None
     user = crud.user.update(db, db_obj=current_user, obj_in=user_in)
     return user
 
@@ -65,10 +70,10 @@ def read_user_by_id(
     Get a specific user by id. (Admin only)
     """
     user = crud.user.get(db, id=user_id)
-    if user == current_user:
-        return user
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    if user == current_user:
+        return user
     return user
 
 

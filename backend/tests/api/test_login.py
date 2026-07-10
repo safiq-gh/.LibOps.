@@ -21,8 +21,15 @@ def test_get_access_token(client: TestClient) -> None:
     assert tokens["token_type"] == "bearer"
 
 def test_use_access_token(client: TestClient) -> None:
+    client.post("/api/v1/users/", json={
+        "email": "login_test_use@example.com",
+        "full_name": "Login Test",
+        "password": "testpassword123",
+        "role": "member"
+    })
+
     login_data = {
-        "username": "login_test@example.com",
+        "username": "login_test_use@example.com",
         "password": "testpassword123",
     }
     r = client.post("/api/v1/login/access-token", data=login_data)
@@ -34,5 +41,5 @@ def test_use_access_token(client: TestClient) -> None:
     )
     assert r.status_code == 200
     user = r.json()
-    assert user["email"] == "login_test@example.com"
+    assert user["email"] == "login_test_use@example.com"
 

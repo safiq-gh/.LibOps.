@@ -116,6 +116,20 @@ async def upload_book_cover(
     book = crud.book.get(db, id=book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
+        
+    allowed_types = {"image/jpeg", "image/png", "image/webp"}
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Only JPEG, PNG, and WebP are allowed."
+        )
+        
+    MAX_SIZE = 5 * 1024 * 1024 # 5 MB
+    if file.size is not None and file.size > MAX_SIZE:
+        raise HTTPException(
+            status_code=400, 
+            detail="File too large. Maximum size is 5MB."
+        )
     
     from app.utils.storage import storage_service
     cover_url = await storage_service.upload_cover(file, str(book_id))

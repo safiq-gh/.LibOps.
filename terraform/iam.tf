@@ -15,10 +15,23 @@ resource "aws_iam_role" "libops_ec2_role" {
   })
 }
 
-# Attach AmazonS3FullAccess policy (required for Phase 9 AWS Integration - Book covers)
-resource "aws_iam_role_policy_attachment" "libops_s3_access" {
-  role       = aws_iam_role.libops_ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+resource "aws_iam_role_policy" "libops_s3_access" {
+  name = "libops-s3-access-policy"
+  role = aws_iam_role.libops_ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject"
+        ]
+        Effect = "Allow"
+        Resource = "arn:aws:s3:::libops-book-covers/*"
+      }
+    ]
+  })
 }
 
 resource "aws_iam_instance_profile" "libops_ec2_profile" {

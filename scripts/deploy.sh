@@ -41,8 +41,7 @@ docker-compose -f docker-compose.prod.yml pull
 echo "Starting application stack..."
 docker-compose -f docker-compose.prod.yml up -d
 
-echo "Running migrations..."
-docker-compose -f docker-compose.prod.yml exec -T backend alembic upgrade head
+
 
 echo "========================================="
 echo "   Deployment completed successfully!    "

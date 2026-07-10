@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/client';
 import Navbar from '../components/Navbar';
+import type { User } from '../types/user';
 
 export default function AdminDashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [books, setBooks] = useState<any[]>([]);
   const [usersList, setUsersList] = useState<any[]>([]);
   const navigate = useNavigate();

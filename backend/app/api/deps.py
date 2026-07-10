@@ -4,7 +4,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
+import uuid
+from app.models.enums import UserRole
 from app.core.config import settings
 from app.db.session import SessionLocal
 from app.models.user import User
@@ -34,7 +35,6 @@ def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    import uuid
     try:
         user_id = uuid.UUID(token_data.sub)
     except Exception:
@@ -56,7 +56,6 @@ def get_current_active_user(
 def get_current_active_admin(
     current_user: User = Depends(get_current_active_user),
 ) -> User:
-    from app.models.enums import UserRole
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="The user doesn't have enough privileges"

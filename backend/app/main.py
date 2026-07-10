@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.base import Base
-from app.db.session import SessionLocal, engine
 from app.api.api_router import api_router
 import app.models  # Register models for create_all
 
 from fastapi.staticfiles import StaticFiles
+from app.core.config import settings
 import os
 import time
 from fastapi import Request
@@ -25,15 +24,10 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:3000",
-        "http://localhost:8080",
-        "http://localhost:80",
-    ],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,18 +36,9 @@ app.add_middleware(
 os.makedirs("static/covers", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-Base.metadata.create_all(bind=engine)
+
 
 app.include_router(api_router, prefix="/api/v1")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @app.get("/")
 def root():

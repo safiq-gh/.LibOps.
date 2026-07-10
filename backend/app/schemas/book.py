@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
@@ -16,7 +16,11 @@ class BookBase(BaseModel):
     available_copies: int = Field(ge=0)
 
 class BookCreate(BookBase):
-    pass
+    @model_validator(mode='after')
+    def check_available_copies(self) -> 'BookCreate':
+        if self.available_copies > self.total_copies:
+            raise ValueError('available_copies cannot exceed total_copies')
+        return self
 
 class BookUpdate(BaseModel):
     isbn: Optional[str] = None
@@ -32,7 +36,7 @@ class BookUpdate(BaseModel):
 
 class BookResponse(BookBase):
     id: UUID
-    available_quantity: int
+
     created_at: datetime
     updated_at: datetime
 

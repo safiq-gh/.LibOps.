@@ -8,7 +8,7 @@ resource "aws_security_group" "libops_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.ssh_allowed_cidrs
   }
 
   ingress {
@@ -19,13 +19,7 @@ resource "aws_security_group" "libops_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    description = "Backend API"
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+
 
   egress {
     from_port   = 0

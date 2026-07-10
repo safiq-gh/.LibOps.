@@ -27,3 +27,9 @@ variable "key_name" {
   type        = string
   default     = "libops-key"
 }
+
+variable "ssh_allowed_cidrs" {
+  description = "CIDR blocks allowed to connect via SSH"
+  type        = list(string)
+  default     = ["10.0.0.0/8"] # Default to internal network, override in tfvars for office/vpn
+}

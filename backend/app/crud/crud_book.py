@@ -46,10 +46,11 @@ def update(
     db.refresh(db_obj)
     return db_obj
 
-def remove(db: Session, *, id: UUID) -> Book:
-    obj = db.query(Book).get(id)
-    db.delete(obj)
-    db.commit()
+def remove(db: Session, *, id: UUID) -> Optional[Book]:
+    obj = db.get(Book, id)
+    if obj:
+        db.delete(obj)
+        db.commit()
     return obj
 
 def get_multi(db: Session, *, skip: int = 0, limit: int = 100) -> list[Book]:

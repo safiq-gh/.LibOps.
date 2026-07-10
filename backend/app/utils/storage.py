@@ -4,6 +4,10 @@ from botocore.exceptions import NoCredentialsError, ClientError
 from fastapi import UploadFile
 from app.core.config import settings
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class StorageService:
     def __init__(self):
         self.bucket = settings.s3_bucket
@@ -19,7 +23,8 @@ class StorageService:
             try:
                 # Try to load credentials from default sources (AWS CLI profile, environment variables, IAM Role)
                 self.s3 = boto3.client("s3", region_name=settings.aws_region)
-            except Exception:
+            except Exception as e:
+                logger.warning(f"Failed to initialize S3 client: {e}. Falling back to local storage.")
                 self.s3 = None
 
     async def upload_cover(self, file: UploadFile, book_id: str) -> str:
@@ -52,6 +57,6 @@ class StorageService:
             f.write(file_content)
         await file.seek(0)
         
-        return f"http://localhost:8000/static/covers/{book_id}{file_ext}"
+        return f"{settings.backend_url.rstrip('/')}/static/covers/{book_id}{file_ext}"
 
 storage_service = StorageService()
