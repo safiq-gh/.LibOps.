@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
-        DOCKER_IMAGE_BACKEND = 'myorg/libops-backend'
-        DOCKER_IMAGE_FRONTEND = 'myorg/libops-frontend'
-        // SONARQUBE_SCANNER_HOME = tool 'SonarQubeScanner'
+        DOCKER_IMAGE_BACKEND = 'isshin693/libops-backend:latest'
+        DOCKER_IMAGE_FRONTEND = 'iishin693/libops-frontend:latest'
+        SONARQUBE_SCANNER_HOME = tool 'SonarQubeScanner'
     }
 
     stages {
@@ -24,7 +24,6 @@ pipeline {
             }
         }
 
-/*
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
@@ -48,7 +47,6 @@ pipeline {
             }
         }
 
-/*
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: env.DOCKER_HUB_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
@@ -60,7 +58,6 @@ pipeline {
                 }
             }
         }
-*/
     }
 
     post {
