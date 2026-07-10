@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
-        DOCKER_IMAGE_BACKEND = 'isshin693/libops-backend:latest'
-        DOCKER_IMAGE_FRONTEND = 'isshin693/libops-frontend:latest'
+        DOCKER_IMAGE_BACKEND = 'isshin693/libops-backend'
+        DOCKER_IMAGE_FRONTEND = 'isshin693/libops-frontend'
         SONARQUBE_SCANNER_HOME = tool 'SonarQubeScanner'
     }
 
