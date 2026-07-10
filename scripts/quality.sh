@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Anchor to project root regardless of where the script is invoked from
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT"
+
 echo "====================================="
 echo "   LibOps Quality Assurance Checks   "
 echo "====================================="

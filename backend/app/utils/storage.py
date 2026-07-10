@@ -44,7 +44,7 @@ class StorageService:
                 await file.seek(0)
                 return f"https://{self.bucket}.s3.{settings.aws_region}.amazonaws.com/{filename}"
             except (NoCredentialsError, ClientError, Exception) as e:
-                print(f"S3 upload failed: {e}. Falling back to local storage.")
+                logger.warning(f"S3 upload failed: {e}. Falling back to local storage.")
                 await file.seek(0)
 
         # Fallback to local static storage

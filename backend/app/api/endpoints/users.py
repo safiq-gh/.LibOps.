@@ -52,28 +52,11 @@ def update_user_me(
     current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Update own user.
+    Update own user. Non-admin users cannot change their role or active status.
     """
-    user_in.role = None
-    user_in.is_active = None
-    user = crud.user.update(db, db_obj=current_user, obj_in=user_in)
-    return user
-
-
-@router.get("/{user_id}", response_model=UserResponse)
-def read_user_by_id(
-    user_id: UUID,
-    current_user: User = Depends(deps.get_current_active_admin),
-    db: Session = Depends(deps.get_db),
-) -> Any:
-    """
-    Get a specific user by id. (Admin only)
-    """
-    user = crud.user.get(db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if user == current_user:
-        return user
+    # Build update dict excluding fields that regular users should not change
+    update_data = user_in.model_dump(exclude_unset=True, exclude={"role", "is_active"})
+    user = crud.user.update(db, db_obj=current_user, obj_in=update_data)
     return user
 
 
@@ -90,3 +73,17 @@ def read_users(
     users = crud.user.get_multi(db, skip=skip, limit=limit)
     return users
 
+
+@router.get("/{user_id}", response_model=UserResponse)
+def read_user_by_id(
+    user_id: UUID,
+    current_user: User = Depends(deps.get_current_active_admin),
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Get a specific user by id. (Admin only)
+    """
+    user = crud.user.get(db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user

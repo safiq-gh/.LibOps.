@@ -8,6 +8,7 @@ from app import crud
 from app.api import deps
 from app.models.user import User
 from app.schemas.book import BookCreate, BookResponse, BookUpdate
+from app.utils.storage import storage_service
 
 router = APIRouter()
 
@@ -131,7 +132,7 @@ async def upload_book_cover(
             detail="File too large. Maximum size is 5MB."
         )
     
-    from app.utils.storage import storage_service
+    
     cover_url = await storage_service.upload_cover(file, str(book_id))
     
     # Update book cover URL

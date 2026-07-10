@@ -14,25 +14,21 @@ from sqlalchemy.pool import StaticPool
 SQLALCHEMY_DATABASE_URL = "sqlite://"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, 
+    SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-@pytest.fixture(scope="function", autouse=True)
-def db() -> Generator:
-    Base.metadata.create_all(bind=engine)
-    yield TestingSessionLocal()
-    Base.metadata.drop_all(bind=engine)
-
-
 @pytest.fixture(scope="function")
 def client() -> Generator:
+    # Create tables fresh for each test
+    Base.metadata.create_all(bind=engine)
+
     def override_get_db():
+        db = TestingSessionLocal()
         try:
-            db = TestingSessionLocal()
             yield db
         finally:
             db.close()
@@ -40,3 +36,7 @@ def client() -> Generator:
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as c:
         yield c
+
+    # Drop tables after test to ensure clean state
+    Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()
