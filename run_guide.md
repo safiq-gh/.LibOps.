@@ -55,7 +55,7 @@ npm run dev
 Production uses `docker-compose.prod.yml` which requires strict security configurations. 
 
 > [!WARNING]
-> Do not use `password123` or default keys in production!
+> Do not use `common passwords` or default keys in production!
 
 **Step 1: Generate a `.env` file**
 Create a `.env` file in the root of the project with secure credentials:
@@ -64,8 +64,8 @@ DB_USER=appuser
 DB_PASSWORD=your_super_secret_password
 DB_NAME=libops
 SECRET_KEY=generate_a_random_32_char_string
-DOCKER_IMAGE_BACKEND=your-repo/libops-backend
-DOCKER_IMAGE_FRONTEND=your-repo/libops-frontend
+DOCKER_IMAGE_BACKEND=isshin693/libops-backend
+DOCKER_IMAGE_FRONTEND=isshin693/libops-frontend
 ```
 
 **Step 2: Run the Production Stack**
