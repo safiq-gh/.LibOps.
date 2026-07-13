@@ -11,14 +11,14 @@ services:
     networks:
       - libops_prod_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-appuser} -d ${DB_NAME:-libops}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-appuser} -d ${DB_NAME:-libops}" ]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: always
 
   backend:
-    image: ${DOCKER_IMAGE_BACKEND:-myorg/libops-backend}:latest
+    image: ${DOCKER_IMAGE_BACKEND:-isshin693/libops-backend}:latest
     container_name: libops_backend_prod
     environment:
       - APP_NAME=LibOps
@@ -40,7 +40,7 @@ services:
     restart: always
 
   frontend:
-    image: ${DOCKER_IMAGE_FRONTEND:-myorg/libops-frontend}:latest
+    image: ${DOCKER_IMAGE_FRONTEND:-isshin693/libops-frontend}:latest
     container_name: libops_frontend_prod
     ports:
       - "80:80"

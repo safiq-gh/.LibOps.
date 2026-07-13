@@ -28,7 +28,16 @@ resource "aws_iam_role_policy" "libops_s3_access" {
           "s3:GetObject"
         ]
         Effect = "Allow"
-        Resource = "arn:aws:s3:::libops-book-covers/*"
+        Resource = "${aws_s3_bucket.book_covers.arn}/*"
+      },
+      {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Effect = "Allow"
+        Resource = "*"
       }
     ]
   })
